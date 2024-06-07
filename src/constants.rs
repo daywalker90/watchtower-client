@@ -1,22 +1,33 @@
+use cln_plugin::options::DefaultIntegerConfigOption;
+
 // Collection of ENV variable names and values
 pub const TOWERS_DATA_DIR: &str = "TOWERS_DATA_DIR";
 pub const DEFAULT_TOWERS_DATA_DIR: &str = ".watchtower";
 
 /// Collections of plugin option names, default values and descriptions
 
-pub const WT_PORT: &str = "watchtower-port";
-pub const DEFAULT_WT_PORT: i64 = 9814;
-pub const WT_PORT_DESC: &str = "tower API port";
-pub const WT_MAX_RETRY_TIME: &str = "watchtower-max-retry-time";
-pub const DEFAULT_WT_MAX_RETRY_TIME: i64 = 3600;
-pub const WT_MAX_RETRY_TIME_DESC: &str = "for how long (in seconds) a retry strategy will try to reach a temporary unreachable tower before giving up. Defaults to 1 hour";
-pub const WT_AUTO_RETRY_DELAY: &str = "watchtower-auto-retry-delay";
-pub const DEFAULT_WT_AUTO_RETRY_DELAY: i64 = 28800;
-pub const WT_AUTO_RETRY_DELAY_DESC: &str = "how long (in seconds) a retrier will wait before auto-retrying a failed tower. Defaults to once every 8 hours";
-pub const DEV_WT_MAX_RETRY_INTERVAL: &str = "dev-watchtower-max-retry-interval";
-pub const DEFAULT_DEV_WT_MAX_RETRY_INTERVAL: i64 = 900;
-pub const DEV_WT_MAX_RETRY_INTERVAL_DESC: &str =
-    "maximum length (in seconds) for a retry interval. Defaults to 15 min";
+pub const WT_PORT: DefaultIntegerConfigOption =
+    DefaultIntegerConfigOption::new_i64_with_default("watchtower-port", 9814, "tower API port");
+pub const WT_MAX_RETRY_TIME: DefaultIntegerConfigOption =
+    DefaultIntegerConfigOption::new_i64_with_default(
+        "watchtower-max-retry-time",
+        3600,
+        "for how long (in seconds) a retry strategy will try to reach a \
+     temporary unreachable tower before giving up. Defaults to 1 hour",
+    );
+pub const WT_AUTO_RETRY_DELAY: DefaultIntegerConfigOption =
+    DefaultIntegerConfigOption::new_i64_with_default(
+        "watchtower-auto-retry-delay",
+        28800,
+        "how long (in seconds) a retrier will wait before auto-retrying a failed tower. \
+     Defaults to once every 8 hours",
+    );
+pub const DEV_WT_MAX_RETRY_INTERVAL: DefaultIntegerConfigOption =
+    DefaultIntegerConfigOption::new_i64_with_default(
+        "dev-watchtower-max-retry-interval",
+        900,
+        "maximum length (in seconds) for a retry interval. Defaults to 15 min",
+    );
 
 /// Collections of rpc method names and descriptions
 

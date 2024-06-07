@@ -26,10 +26,10 @@ tokio = { version = "1.5", features = [ "rt-multi-thread", "fs" ] }
 
 # Bitcoin and Lightning
 bitcoin = "0.28.0"
-cln-plugin = "0.1.2"
+cln-plugin = "0.1.9"
 
 # Local
-teos-common = { path = "../teos-common" }
+teos-common = { path = "../rust-teos/teos-common" }
 
 [dev-dependencies]
 mockito = "0.32.4"

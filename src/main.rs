@@ -8,7 +8,6 @@ use serde_json::json;
 use tokio::io::{stdin, stdout};
 use tokio::sync::mpsc::unbounded_channel;
 
-use cln_plugin::options::{ConfigOption, Value};
 use cln_plugin::{anyhow, Builder, Error, Plugin};
 
 use teos_common::appointment::{Appointment, Locator};
@@ -76,8 +75,8 @@ async fn register(
     // which is not available in the current version of `cln-plugin` (but already on master). Add it for the next release.
 
     let port = params.port.unwrap_or(
-        u16::try_from(plugin.option(constants::WT_PORT).unwrap().as_i64().unwrap())
-            .map_err(|_| anyhow!("{} out of range", constants::WT_PORT))?,
+        u16::try_from(plugin.option(&constants::WT_PORT).unwrap())
+            .map_err(|_| anyhow!("{} out of range", constants::WT_PORT.name))?,
     );
 
     let tower_net_addr = {
@@ -534,26 +533,10 @@ async fn main() -> Result<(), Error> {
     };
 
     let builder = Builder::new(stdin(), stdout())
-        .option(ConfigOption::new(
-            constants::WT_PORT,
-            Value::Integer(constants::DEFAULT_WT_PORT),
-            constants::WT_PORT_DESC,
-        ))
-        .option(ConfigOption::new(
-            constants::WT_MAX_RETRY_TIME,
-            Value::Integer(constants::DEFAULT_WT_MAX_RETRY_TIME),
-            constants::WT_MAX_RETRY_TIME_DESC,
-        ))
-        .option(ConfigOption::new(
-            constants::WT_AUTO_RETRY_DELAY,
-            Value::Integer(constants::DEFAULT_WT_AUTO_RETRY_DELAY),
-            constants::WT_AUTO_RETRY_DELAY_DESC,
-        ))
-        .option(ConfigOption::new(
-            constants::DEV_WT_MAX_RETRY_INTERVAL,
-            Value::Integer(constants::DEFAULT_DEV_WT_MAX_RETRY_INTERVAL),
-            constants::DEV_WT_MAX_RETRY_INTERVAL_DESC,
-        ))
+        .option(constants::WT_PORT)
+        .option(constants::WT_MAX_RETRY_TIME)
+        .option(constants::WT_AUTO_RETRY_DELAY)
+        .option(constants::DEV_WT_MAX_RETRY_INTERVAL)
         .rpcmethod(
             constants::RPC_REGISTER_TOWER,
             constants::RPC_REGISTER_TOWER_DESC,
@@ -629,39 +612,25 @@ async fn main() -> Result<(), Error> {
         .await,
     ));
 
-    let max_elapsed_time = u16::try_from(
-        midstate
-            .option(constants::WT_MAX_RETRY_TIME)
-            .unwrap()
-            .as_i64()
-            .unwrap(),
-    )
-    .map_err(|e| {
-        log::error!("{} out of range", constants::WT_MAX_RETRY_TIME);
+    let max_elapsed_time = u16::try_from(midstate.option(&constants::WT_MAX_RETRY_TIME).unwrap())
+        .map_err(|e| {
+        log::error!("{} out of range", constants::WT_MAX_RETRY_TIME.name);
         e
     })?;
 
-    let auto_retry_delay = u32::try_from(
-        midstate
-            .option(constants::WT_AUTO_RETRY_DELAY)
-            .unwrap()
-            .as_i64()
-            .unwrap(),
-    )
-    .map_err(|e| {
-        log::error!("{} out of range", constants::WT_AUTO_RETRY_DELAY);
-        e
-    })?;
+    let auto_retry_delay = u32::try_from(midstate.option(&constants::WT_AUTO_RETRY_DELAY).unwrap())
+        .map_err(|e| {
+            log::error!("{} out of range", constants::WT_AUTO_RETRY_DELAY.name);
+            e
+        })?;
 
     let max_interval_time = u16::try_from(
         midstate
-            .option(constants::DEV_WT_MAX_RETRY_INTERVAL)
-            .unwrap()
-            .as_i64()
+            .option(&constants::DEV_WT_MAX_RETRY_INTERVAL)
             .unwrap(),
     )
     .map_err(|e| {
-        log::error!("{} out of range", constants::DEV_WT_MAX_RETRY_INTERVAL);
+        log::error!("{} out of range", constants::DEV_WT_MAX_RETRY_INTERVAL.name);
         e
     })?;
 
